@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/home"
+            android:title="Home"
+            android:icon="@drawable/ic_home"/>
+        <item android:id="@+id/rv_page"
+            android:title="Recycler View"
+            android:icon="@drawable/ic_rv"/>
+        <item android:id="@+id/second_activity"
+            android:title="Second Activity"
+            android:icon="@drawable/ic_second_activity"/>
+    </group>
+</menu>

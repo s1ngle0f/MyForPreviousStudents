@@ -1,6 +1,7 @@
 package com.example.myforpreviousstudents
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Window
 import android.widget.Toast
@@ -56,6 +57,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.second_activity -> {
                     toast("Second Activity")
+                    val intent = Intent(this, SecondActivity::class.java)
+                    startActivity(intent)
                 }
             }
             binding.drawerLayout.closeDrawers()

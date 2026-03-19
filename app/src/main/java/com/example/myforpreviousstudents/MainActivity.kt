@@ -14,7 +14,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.myforpreviousstudents.databinding.ActivityMainBinding
+import java.util.concurrent.TimeUnit
 
 const val ACTION_USER_LOGGED_IN = "com.example.myforpreviousstudents.USER_LOGGED_IN"
 
@@ -89,6 +97,34 @@ class MainActivity : AppCompatActivity() {
             putExtra("user_id", 123)
         }
         sendBroadcast(intent)
+
+        val inputData = workDataOf("user_id" to 123)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED) // только Wi-Fi
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setInputData(inputData)
+//            .setConstraints(constraints)
+            .build()
+        val workRequest2 = OneTimeWorkRequestBuilder<SyncWorker>()
+            .build()
+//        val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(
+//            15, TimeUnit.MINUTES
+//        ).build()
+        WorkManager.getInstance(this)
+            .enqueue(workRequest)
+        WorkManager.getInstance(this)
+            .getWorkInfoByIdLiveData(workRequest.id)
+            .observe(this) { workInfo ->
+                if (workInfo?.state == WorkInfo.State.SUCCEEDED) {
+                    Toast.makeText(this@MainActivity, "Ready", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+//        WorkManager.getInstance(this)
+//            .beginWith(workRequest)
+//            .then(workRequest2)
+//            .enqueue()
     }
 
     override fun onStop() {

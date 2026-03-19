@@ -1,7 +1,10 @@
 package com.example.myforpreviousstudents
 
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.Window
 import android.widget.Toast
@@ -13,8 +16,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.myforpreviousstudents.databinding.ActivityMainBinding
 
+const val ACTION_USER_LOGGED_IN = "com.example.myforpreviousstudents.USER_LOGGED_IN"
+
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private lateinit var wifiReceiver: WifiStateReceiver
+    private lateinit var bluetoothReceiver: BluetoothStateReceiver
+    private lateinit var userLoginReceiver: UserLoginReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +71,32 @@ class MainActivity : AppCompatActivity() {
             }
             binding.drawerLayout.closeDrawers()
             true
-        }}
+        }
+
+        wifiReceiver = WifiStateReceiver()
+        val filterWiFi = IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
+        registerReceiver(wifiReceiver, filterWiFi)
+
+        bluetoothReceiver = BluetoothStateReceiver()
+        val filterBluetooth = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        registerReceiver(bluetoothReceiver, filterBluetooth)
+
+        val userLoginReceiver = UserLoginReceiver()
+        val filter = IntentFilter(ACTION_USER_LOGGED_IN)
+        registerReceiver(userLoginReceiver, filter, RECEIVER_NOT_EXPORTED)
+        val intent = Intent(ACTION_USER_LOGGED_IN).apply {
+            setPackage(packageName)
+            putExtra("user_id", 123)
+        }
+        sendBroadcast(intent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(wifiReceiver)
+        unregisterReceiver(bluetoothReceiver)
+        unregisterReceiver(userLoginReceiver)
+    }
 }
 
 fun Context.toast(msg: String) {

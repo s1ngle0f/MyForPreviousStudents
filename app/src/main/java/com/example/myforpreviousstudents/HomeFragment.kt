@@ -27,7 +27,7 @@ class HomeFragment : Fragment(), LocationListener {
     private fun ensureNotificationPermission() {
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             val granted = ContextCompat.checkSelfPermission(
-                context!!, Manifest.permission.POST_NOTIFICATIONS
+                requireContext(), Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!granted) {
@@ -79,7 +79,7 @@ class HomeFragment : Fragment(), LocationListener {
 //            return
 //        }
         val granted = ContextCompat.checkSelfPermission(
-            context!!, Manifest.permission.ACCESS_FINE_LOCATION
+            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!granted) {
@@ -110,9 +110,9 @@ class HomeFragment : Fragment(), LocationListener {
     ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         ensureNotificationPermission()
-        ensureChannel(context = context!!)
+        ensureChannel(context = requireContext())
         binding.buttonNotify.setOnClickListener {
-            showNotification(context!!)
+            showNotification(requireContext())
         }
 
         locationManager = requireContext()
